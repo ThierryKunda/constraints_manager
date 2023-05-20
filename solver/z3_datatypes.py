@@ -1,4 +1,4 @@
-from z3 import Datatype, IntSort, ArraySort, Solver, Const, And, Int
+from z3 import Datatype, IntSort, ArraySort, Solver, Const, BoolSort
 
 Datetime = Datatype('Datetime')
 Datetime.declare(
@@ -17,21 +17,30 @@ year = Datetime.year
 hour = Datetime.hour
 minutes = Datetime.minutes
 
+DateTimeInterval = Datatype('DateTimeInterval')
+DateTimeInterval.declare(
+    'cdti',
+    ('start', Datetime),
+    ('end', Datetime)
+)
+DateTimeInterval = DateTimeInterval.create()
+start_time = DateTimeInterval.start
+end_time = DateTimeInterval.end
+
 
 Room = Datatype('Room')
 Room.declare(
     'croom',
     ('room_id', IntSort()),
     ('capacity', IntSort()),
-    ('session_types', ArraySort(IntSort(), IntSort())),
-    ('availabilities', ArraySort(IntSort(), Datetime))
+    ('lecture', BoolSort()),
+    ('tutorial', BoolSort()),
+    ('practicum', BoolSort())
 )
 Room = Room.create()
 
 room_id = Room.room_id
 capacity = Room.capacity
-session_types = Room.session_types
-availabilities = Room.availabilities
 
 Slot = Datatype('Slot')
 Slot.declare(
@@ -50,33 +59,17 @@ session_type = Slot.session_type
 subject = Slot.subject
 room = Slot.room
 
-# SlotList = Datatype('SlotList')
-# SlotList.declare('empty')
-# SlotList.declare(
-#     'head',
-#     ('value', Slot),
-#     ('tail', SlotList)
-# )
-# SlotList = SlotList.create()
-
-# IntList = Datatype('IntList')
-# IntList.declare('empty')
-# IntList.declare(
-#     'head',
-#     ('value', IntSort()),
-#     ('tail', IntList)
-# )
-# IntList = IntList.create()
-
-X = [ Int('x%s' % i) for i in range(5) ]
-Y = [ Int('y%s' % i) for i in range(5) ]
+# def datetimes_from_interval(
+#         start_hour: int, start_minute: int,
+#         end_hour: int, end_minute: int
+# ):
+#     res = []
+#     for i in range(end_hour-start_hour):
+#         res 
 
 if __name__ == '__main__':
     s = Solver()
-    # a = Const('a', Slot)
-    # s.add(hour(slot_start_time(a)) > 1020)
-    X_gt_Y = [ X[i] > Y[i] for i in range(5) ]
-    c = And(X_gt_Y)
-    s.add(c, )
+    a = Const('a', Slot)
+    s.add(hour(slot_start_time(a)) > 1020)
     print(s.check())
     print(s.model())

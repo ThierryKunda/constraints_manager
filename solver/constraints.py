@@ -1,4 +1,4 @@
-from z3 import BoolRef, And, Solver, Const, Int, ForAll, Implies, Array, IntSort, And, Store, Sqrt, Or, Real, simplify, Empty
+from z3 import BoolRef, And, Solver, Const, Int, ForAll, Implies, Array, IntSort, And, Store, Sqrt, Or, Real, simplify, Empty, Or, sat
 
 from functions import all_models
 import z3_datatypes as dtypes
@@ -7,7 +7,7 @@ def datetime_formatted(d) -> BoolRef:
     return And(
         dtypes.day(d) == 15,
         dtypes.month(d) == 5,
-        dtypes.year(d) == 2023, 
+        dtypes.year(d) == 2023,
         dtypes.hour(d) >= 0,
         dtypes.hour(d) <= 23,
         dtypes.minutes(d) >= 0,
@@ -16,13 +16,35 @@ def datetime_formatted(d) -> BoolRef:
     )
 
 def ordered_datetimes(d1, d2) -> BoolRef:
-    return (
-        dtypes.hour(d1) * 60
-        + dtypes.minutes(d1)
-    ) - (
-        dtypes.hour(d2) * 60
-        + dtypes.minutes(d2)
-    ) <= 0
+    return Or(
+        # dtypes.year(d1) < dtypes.year(d2),
+        # dtypes.month(d1) < dtypes.hour(d2),
+        # dtypes.day(d1) < dtypes.day(d2),
+        # dtypes.hour(d1) < dtypes.hour(d2),
+        # dtypes.minutes(d1) <= dtypes.minutes(d2),
+        And(
+            dtypes.year(d1) == dtypes.year(d2),
+            dtypes.month(d1) < dtypes.month(d2)
+        ),
+        And(
+            dtypes.year(d1) == dtypes.year(d2),
+            dtypes.month(d1) == dtypes.month(d2),
+            dtypes.day(d1) < dtypes.day(d2),
+        ),
+        And(
+            dtypes.year(d1) == dtypes.year(d2),
+            dtypes.month(d1) == dtypes.month(d2),
+            dtypes.day(d1) == dtypes.day(d2),
+            dtypes.hour(d1) < dtypes.hour(d2)
+        ),
+        And(
+            dtypes.year(d1) == dtypes.year(d2),
+            dtypes.month(d1) == dtypes.month(d2),
+            dtypes.day(d1) == dtypes.day(d2),
+            dtypes.hour(d1) == dtypes.hour(d2),
+            dtypes.minutes(d1) <= dtypes.minutes(d2)
+        )
+    )
 
 def last(d1, d2, duration: int):
     return (
@@ -39,6 +61,26 @@ def start_before_end(slot) -> BoolRef:
 def session_type_formatted(st):
     return 0 <= st <= 3
 
+def ordered_slots(slots: list[dtypes.Slot]) -> BoolRef:
+    constrs = []
+    for i in range(len(slots)):
+        last(
+            dtypes.slot_start_time(slots[i]),
+            dtypes.slot_end_time(slots[i]),
+            15
+        )
+        for j in range(len(slots)):
+            constrs.append(
+                Implies(
+                    last(
+                        dtypes.slot_end_time(slots[i]),
+                        dtypes.slot_start_time(slots[j]),
+                        15
+                    ),
+                    i == j + 15
+                ),
+            )
+    return constrs
 
 if __name__ == "__main__":
     s = Solver()
@@ -48,10 +90,16 @@ if __name__ == "__main__":
     st = Int('st')
     i = Int('i')
     j = Int('j')
-    my_array = Array('my_array', IntSort(), IntSort())
-    print(*all_models(
-        s,
-        datetime_formatted(d1),
-        datetime_formatted(d2),
-        last(d1, d2, 60)
-    ), sep="\n")
+    slots = [Const(f"sl{i}", dtypes.Slot) for i in range(5)]
+    # print(*all_models(
+    #     s,
+    #     datetime_formatted(d1),
+    #     datetime_formatted(d2),
+    #     last(d1, d2, 60)
+    # ), sep="\n")
+    be = ordered_slots(slots)
+    s.add(be)
+    if s.check() == sat:
+        print(s.model())
+    else:
+        print("Non satisfiable")
