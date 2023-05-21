@@ -14,10 +14,11 @@ auto_exclusion = constraints.auto_exclusion(slots)
 pause_dejeuner = [constraints.pause_dejeuner(sl, 12, 30, 13, 30) for sl in slots]
 s = Solver()
 
-s.add(*formatted, *ordered, *in_day_interval, *auto_exclusion, *pause_dejeuner)
+# s.add(*formatted, *ordered, *in_day_interval, *auto_exclusion, *pause_dejeuner)
 
-if s.check() == sat:
-    # funcs.all_models(s, *ordered, *formatted, *in_day_interval, auto_exclusion)
-    print(s.model())
-else:
-    print('Insatisfiable')
+models = funcs.all_models(s, *ordered, *formatted, *in_day_interval, *auto_exclusion, *pause_dejeuner, max_models=3)
+print(*models, sep="\n")
+# if s.check() == sat:
+#     print(s.model())
+# else:
+#     print('Insatisfiable')
