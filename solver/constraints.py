@@ -5,9 +5,9 @@ import z3_datatypes as dtypes
 
 def datetime_formatted(d) -> BoolRef:
     return And(
-        dtypes.day(d) == 22,
-        dtypes.month(d) == 5,
-        dtypes.year(d) == 2023,
+        dtypes.day(d) >= 1,
+        dtypes.month(d) >= 1,
+        dtypes.year(d) >= 1,
         dtypes.hour(d) >= 0,
         dtypes.hour(d) <= 23,
         dtypes.minutes(d) >= 0,
@@ -72,6 +72,42 @@ def day_interval(slot, start_hour: int, start_minute: int, end_hour: int, end_mi
         )
     )
 
+def year_interval(slot, start_day: int, start_month: int, start_year: int, end_day: int, end_month: int, end_year: int) -> BoolRef:
+    return And(
+        Or(
+            start_year < dtypes.year(dtypes.slot_start_time(slot)),
+            And(
+                start_year == dtypes.year(dtypes.slot_start_time(slot)),
+                start_month < dtypes.month(dtypes.slot_start_time(slot)),
+            ),
+            And(
+                start_year == dtypes.year(dtypes.slot_start_time(slot)),
+                start_month == dtypes.month(dtypes.slot_start_time(slot)),
+                start_day <= dtypes.day(dtypes.slot_start_time(slot)),
+            )
+        ),
+        Or(
+            dtypes.year(dtypes.slot_end_time(slot)) < end_year,
+            And(
+            dtypes.year(dtypes.slot_end_time(slot)) == end_year,
+            dtypes.month(dtypes.slot_end_time(slot)) < end_month,
+            ),
+            And(
+                dtypes.year(dtypes.slot_end_time(slot)) == end_year,
+                dtypes.month(dtypes.slot_end_time(slot)) == end_month,
+                dtypes.day(dtypes.slot_end_time(slot)) <= end_day,
+            )
+        ),
+
+    )
+
+def meme_jour(slot) -> BoolRef:
+    return And(
+        dtypes.day(dtypes.slot_start_time(slot)) == dtypes.day(dtypes.slot_end_time(slot)),
+        dtypes.month(dtypes.slot_start_time(slot)) == dtypes.month(dtypes.slot_end_time(slot)),
+        dtypes.year(dtypes.slot_start_time(slot)) == dtypes.year(dtypes.slot_end_time(slot)),
+    )
+
 def equivalent(P: BoolRef, Q: BoolRef):
     return And(
         Implies(P, Q),
@@ -121,6 +157,88 @@ def pause_dejeuner(slot, start_hour: int, start_minute: int, end_hour: int, end_
         )
     )
     return Or(*constrs)
+
+def est_bissextile(annee: int):
+    if annee % 4 == 0:
+        if annee % 100 == 0:
+            return annee % 400
+        return True
+    return False
+
+def calendrier_valide(slot) -> BoolRef:
+    constrs = []
+    start_year = dtypes.year(dtypes.slot_start_time(slot))
+    end_year = dtypes.year(dtypes.slot_end_time(slot))
+    start_month = dtypes.month(dtypes.slot_start_time(slot))
+    end_month = dtypes.month(dtypes.slot_end_time(slot))
+    start_day = dtypes.day(dtypes.slot_start_time(slot))
+    end_day = dtypes.day(dtypes.slot_end_time(slot))
+    start_biss = est_bissextile(start_year)
+    end_biss = est_bissextile(end_year)
+    # Janvier
+    constrs += [
+        Implies(start_month == 1, start_day <= 31),
+        Implies(end_month == 1, end_day <= 31)
+    ] 
+
+    # Février
+    constrs += [
+        Implies(start_month == 2, Or(And(start_biss, start_day <= 29), And(not start_biss, start_day <= 28))),
+        Implies(end_month == 2, Or(And(end_biss, end_day <= 29), And(not end_biss, end_day <= 28)))
+
+    ]
+    # Mars
+    constrs += [
+        Implies(start_month == 3, start_day <= 31),
+        Implies(end_month == 3, end_day <= 31)
+    ]
+    # Avril
+    constrs += [
+        Implies(start_month == 4, start_day <= 30),
+        Implies(end_month == 4, end_day <= 30)
+    ]
+    # Mai
+    constrs += [
+        Implies(start_month == 5, start_day <= 31),
+        Implies(end_month == 5, end_day <= 31)
+    ]
+    # Juin
+    constrs += [
+        Implies(start_month == 6, start_day <= 30),
+        Implies(end_month == 6, end_day <= 30)
+    ]
+    # Juillet
+    constrs += [
+        Implies(start_month == 7, start_day <= 31),
+        Implies(end_month == 7, end_day <= 31)
+    ]
+    # Août
+    constrs += [
+        Implies(start_month == 8, start_day <= 31),
+        Implies(end_month == 8, end_day <= 31)
+    ]
+    # Septembre
+    constrs += [
+        Implies(start_month == 9, start_day <= 30),
+        Implies(end_month == 9, end_day <= 30)
+    ]
+    # Octobre
+    constrs += [
+        Implies(start_month == 10, start_day <= 31),
+        Implies(end_month == 10, end_day <= 31)
+    ]
+    # Novembre
+    constrs += [
+        Implies(start_month == 11, start_day <= 30),
+        Implies(end_month == 11, end_day <= 30)
+    ]
+    # Décembre
+    constrs += [
+        Implies(start_month == 12, start_day <= 31),
+        Implies(end_month == 12, end_day <= 31)
+    ]
+
+    return And(*constrs)
 
 def duree_min(slot, duration: int) -> BoolRef:
     return (
