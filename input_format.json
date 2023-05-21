@@ -1,0 +1,97 @@
+{
+    "day_interval": {
+        "day_start_hour": "8:15",
+        "end_start_hour": "19:30"
+    },
+    "school_year_interval": {
+        "year_start_date": "02/09/2022-08:00",
+        "year_end_date": "29/06/2023-19:30"
+    },
+    "lunch": {
+        "lunch_start_hour": "11:30",
+            "lunch_end_hour": "14:00"
+    },
+    "tests_dates": [
+        {
+            "session_type": "exam",
+            "start_date_time": "12/12/2022-08:00",
+            "end_date_time": "16/12/2022-17:00"
+        },
+        {
+            "session_type": "midterm",
+            "start_date_time": "20/02/2023-08:00",
+            "end_date_time": "24/02/2023-17:00"
+        },
+        {
+            "session_type": "exam",
+            "start_date_time": "01/05/2022-10:00",
+            "end_date_time": "05/12/2022-16:00"
+        }
+    ],
+    "classrooms": [
+        {
+            "id": 1,
+            "capacity": 30,
+            "session_types": [
+                "midterm",
+                "exam"
+            ],
+            "availabilities": [
+                {
+                    "start_time": "14/05/2023-14:00",
+                    "end_time": "14/05/2023-19:00"
+                }
+            ]
+        }
+    ],
+    "courses": [
+        {
+            "id": 1,
+            "course_start": "05/09/2023",
+            "studentsPerGroup": [
+                {
+                    "group_id": 1,
+                    "size": 29
+                },
+                {
+                    "group_id": 2,
+                    "size": 28
+                },
+                {
+                    "group_id": 3,
+                    "size": 30
+                },
+                {
+                    "group_id": 4,
+                    "size": 32
+                }
+            ]
+        }
+    ],
+    "order_position": [
+        {
+            "order_position": 1,
+            "session_type": "lecture",
+                "course_id": 1,
+                "duration": 120
+        },
+        {
+            "order_position": 2,
+            "session_type": "practicum",
+            "course_id": 1,
+            "duration": 180
+        },
+        {
+            "order_position": 3,
+            "session_type": "practicum",
+            "course_id": 1,
+            "duration": 120
+        },
+        {
+            "order_position": 4,
+            "session_type": "tutorial",
+            "course_id": 1,
+            "duration": 120
+        }
+    ]
+}
