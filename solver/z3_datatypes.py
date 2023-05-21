@@ -3,8 +3,8 @@ from z3 import Datatype, IntSort, ArraySort, Solver, Const, BoolSort
 Datetime = Datatype('Datetime')
 Datetime.declare(
     'cdt',
-    ('month', IntSort()),
     ('day', IntSort()),
+    ('month', IntSort()),
     ('year', IntSort()),
     ('hour', IntSort()),
     ('minutes', IntSort())
