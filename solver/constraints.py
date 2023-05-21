@@ -5,7 +5,7 @@ import z3_datatypes as dtypes
 
 def datetime_formatted(d) -> BoolRef:
     return And(
-        dtypes.day(d) == 15,
+        dtypes.day(d) == 22,
         dtypes.month(d) == 5,
         dtypes.year(d) == 2023,
         dtypes.hour(d) >= 0,
