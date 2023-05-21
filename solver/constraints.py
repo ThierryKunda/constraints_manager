@@ -17,11 +17,7 @@ def datetime_formatted(d) -> BoolRef:
 
 def ordered_datetimes(d1, d2) -> BoolRef:
     return Or(
-        # dtypes.year(d1) < dtypes.year(d2),
-        # dtypes.month(d1) < dtypes.hour(d2),
-        # dtypes.day(d1) < dtypes.day(d2),
-        # dtypes.hour(d1) < dtypes.hour(d2),
-        # dtypes.minutes(d1) <= dtypes.minutes(d2),
+        dtypes.year(d1) < dtypes.year(d2),
         And(
             dtypes.year(d1) == dtypes.year(d2),
             dtypes.month(d1) < dtypes.month(d2)
@@ -42,7 +38,7 @@ def ordered_datetimes(d1, d2) -> BoolRef:
             dtypes.month(d1) == dtypes.month(d2),
             dtypes.day(d1) == dtypes.day(d2),
             dtypes.hour(d1) == dtypes.hour(d2),
-            dtypes.minutes(d1) <= dtypes.minutes(d2)
+            dtypes.minutes(d1) < dtypes.minutes(d2)
         )
     )
 
