@@ -64,22 +64,23 @@ def session_type_formatted(st):
 def ordered_slots(slots: list[dtypes.Slot]) -> BoolRef:
     constrs = []
     for i in range(len(slots)):
-        last(
-            dtypes.slot_start_time(slots[i]),
-            dtypes.slot_end_time(slots[i]),
-            15
-        )
         for j in range(len(slots)):
-            constrs.append(
-                Implies(
-                    last(
-                        dtypes.slot_end_time(slots[i]),
-                        dtypes.slot_start_time(slots[j]),
-                        15
-                    ),
-                    i == j + 15
-                ),
-            )
+            if i != j:
+                constrs.append(
+                    Or(
+                        And(
+                            ordered_datetimes(dtypes.slot_start_time(slots[i]), dtypes.slot_start_time(slots[j])),
+                            ordered_datetimes(dtypes.slot_end_time(slots[i]), dtypes.slot_end_time(slots[j])),
+                            ordered_datetimes(dtypes.slot_end_time(slots[i]), dtypes.slot_start_time(slots[j]))
+                        ),
+                        And(
+                            ordered_datetimes(dtypes.slot_start_time(slots[j]), dtypes.slot_start_time(slots[i])),
+                            ordered_datetimes(dtypes.slot_end_time(slots[j]), dtypes.slot_end_time(slots[i])),
+                            ordered_datetimes(dtypes.slot_start_time(slots[j]), dtypes.slot_end_time(slots[i]))
+                        )
+
+                    )
+                )
     return constrs
 
 if __name__ == "__main__":
