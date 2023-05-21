@@ -5,6 +5,7 @@ def all_models(s: Solver, *e: ExprRef) -> list[ModelRef]:
     s.add(*e)
     while s.check() == sat:
         m = s.model()
+        # print(m, "\n")
         # On stocke le modèle
         models.append(m)
         # On boucle sur tous les éléments auxquels on a donné une interprétation
