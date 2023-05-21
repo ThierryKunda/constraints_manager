@@ -100,6 +100,28 @@ def auto_exclusion(slots: list) -> list[BoolRef]:
                 )
     return constrs
 
+def pause_dejeuner(slot, start_hour: int, start_minute: int, end_hour: int, end_minute: int) -> BoolRef:
+    constrs = []
+    constrs.append(
+        Or(
+            dtypes.hour(dtypes.slot_end_time(slot)) < start_hour,
+            And(
+                dtypes.hour(dtypes.slot_end_time(slot)) == start_hour,
+                dtypes.minutes(dtypes.slot_end_time(slot)) <= start_minute,
+            ),
+        )
+    )
+    constrs.append(
+        Or(
+            end_hour < dtypes.hour(dtypes.slot_start_time(slot)),
+            And(
+                end_hour == dtypes.hour(dtypes.slot_start_time(slot)),
+                end_minute <= dtypes.minutes(dtypes.slot_start_time(slot)),
+            ),
+        )
+    )
+    return Or(*constrs)
+
 if __name__ == "__main__":
     s = Solver()
     sl = Const('sl', dtypes.Slot)
