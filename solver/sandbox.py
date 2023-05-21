@@ -6,12 +6,11 @@ import functions as funcs
 # s.add(t == lm)
 
 slots = [Const(f'sl{i}', dt.Slot) for i in range(4)]
-# positive_dt = [And(constraints.positive_datetime_values(dt.slot_start_time(sl)), constraints.positive_datetime_values(dt.slot_end_time(sl))) for sl in slots]
 formatted = [And(constraints.datetime_formatted(dt.slot_start_time(sl)), constraints.datetime_formatted(dt.slot_end_time(sl))) for sl in slots]
 ordered = [constraints.start_before_end(sl) for sl in slots]
 in_day_interval = [And(constraints.day_interval(sl, 8, 0, 18, 30)) for sl in slots]
 in_year_interval = [constraints.year_interval(sl, 22, 5, 2023, 22, 5, 2023) for sl in slots]
-auto_exclusion = constraints.auto_exclusion(slots)
+auto_exclusion = constraints.auto_exclusion(slots, 15)
 pause_dejeuner = [constraints.pause_dejeuner(sl, 12, 30, 13, 30) for sl in slots]
 calendrier_valide = [constraints.calendrier_valide(sl) for sl in slots]
 meme_j = [constraints.meme_jour(sl) for sl in slots]

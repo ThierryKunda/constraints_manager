@@ -15,7 +15,7 @@ def datetime_formatted(d) -> BoolRef:
         dtypes.minutes(d) % 15 == 0
     )
 
-def ordered_datetimes(d1, d2) -> BoolRef:
+def ordered_datetimes(d1, d2, margin: int = 0) -> BoolRef:
     return Or(
         dtypes.year(d1) < dtypes.year(d2),
         And(
@@ -38,7 +38,7 @@ def ordered_datetimes(d1, d2) -> BoolRef:
             dtypes.month(d1) == dtypes.month(d2),
             dtypes.day(d1) == dtypes.day(d2),
             dtypes.hour(d1) == dtypes.hour(d2),
-            dtypes.minutes(d1) < dtypes.minutes(d2)
+            dtypes.minutes(d1) < dtypes.minutes(d2) + margin
         )
     )
 
@@ -114,22 +114,24 @@ def equivalent(P: BoolRef, Q: BoolRef):
         Implies(Q, P),
     )
 
-def auto_exclusion(slots: list) -> list[BoolRef]:
+def auto_exclusion(slots: list, pause: int = 0) -> list[BoolRef]:
     constrs = []
     for i in range(len(slots)):
         for j in range(len(slots)):
             if i != j:
                 constrs.append(
                     Or(
+                        # ((t1.start < t2.start) et (t1.end < t2.end) et (t1.end + pause < t2.start))
                         And(
                             ordered_datetimes(dtypes.slot_start_time(slots[i]), dtypes.slot_start_time(slots[j])),
                             ordered_datetimes(dtypes.slot_end_time(slots[i]), dtypes.slot_end_time(slots[j])),
                             ordered_datetimes(dtypes.slot_end_time(slots[i]), dtypes.slot_start_time(slots[j]))
                         ),
+                        # ((t1.start > t2.start) et (t1.end > t2.end) et (t1.start > t2.end + pause))
                         And(
                             ordered_datetimes(dtypes.slot_start_time(slots[j]), dtypes.slot_start_time(slots[i])),
                             ordered_datetimes(dtypes.slot_end_time(slots[j]), dtypes.slot_end_time(slots[i])),
-                            ordered_datetimes(dtypes.slot_start_time(slots[j]), dtypes.slot_end_time(slots[i]))
+                            ordered_datetimes(dtypes.slot_start_time(slots[j]), dtypes.slot_end_time(slots[i]), pause)
                         )
 
                     )
