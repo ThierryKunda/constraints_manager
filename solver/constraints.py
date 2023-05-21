@@ -58,8 +58,23 @@ def last(d1, d2, duration: int):
 def start_before_end(slot) -> BoolRef:
     return ordered_datetimes(dtypes.slot_start_time(slot), dtypes.slot_end_time(slot))
 
-def session_type_formatted(st):
-    return 0 <= st <= 3
+def day_interval(slot, start_hour: int, start_minute: int, end_hour: int, end_minute: int) -> BoolRef:
+    return And(
+        Or(
+            start_hour < dtypes.hour(dtypes.slot_start_time(slot)),
+            And(
+                start_hour == dtypes.hour(dtypes.slot_start_time(slot)),
+                start_minute <= dtypes.minutes(dtypes.slot_start_time(slot)),
+            )
+        ),
+        Or(
+            dtypes.hour(dtypes.slot_end_time(slot)) < end_hour,
+            And(
+                dtypes.hour(dtypes.slot_end_time(slot)) == end_hour,
+                dtypes.minutes(dtypes.slot_end_time(slot)) <= end_minute,
+            )
+        )
+    )
 
 def equivalent(P: BoolRef, Q: BoolRef):
     return And(
