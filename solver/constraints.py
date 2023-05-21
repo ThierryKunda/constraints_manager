@@ -61,7 +61,13 @@ def start_before_end(slot) -> BoolRef:
 def session_type_formatted(st):
     return 0 <= st <= 3
 
-def ordered_slots(slots: list[dtypes.Slot]) -> BoolRef:
+def equivalent(P: BoolRef, Q: BoolRef):
+    return And(
+        Implies(P, Q),
+        Implies(Q, P),
+    )
+
+def auto_exclusion(slots: list) -> list[BoolRef]:
     constrs = []
     for i in range(len(slots)):
         for j in range(len(slots)):
