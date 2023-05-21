@@ -122,6 +122,15 @@ def pause_dejeuner(slot, start_hour: int, start_minute: int, end_hour: int, end_
     )
     return Or(*constrs)
 
+def duree_min(slot, duration: int) -> BoolRef:
+    return (
+        dtypes.hour(dtypes.slot_end_time(slot)) * 60
+        + dtypes.minutes(dtypes.slot_end_time(slot))
+    ) - (
+        dtypes.hour(dtypes.slot_start_time(slot)) * 60
+        + dtypes.minutes(dtypes.slot_start_time(slot))
+    ) >= duration
+
 if __name__ == "__main__":
     s = Solver()
     sl = Const('sl', dtypes.Slot)
