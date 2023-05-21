@@ -1,4 +1,4 @@
-from z3 import BoolRef, And, Solver, Const, Int, ForAll, Implies, Array, IntSort, And, Store, Sqrt, Or, Real, simplify, Empty, Or, sat
+from z3 import BoolRef, And, Solver, Const, Int, Implies, And, Or, Implies
 
 from functions import all_models
 import z3_datatypes as dtypes
@@ -115,9 +115,7 @@ if __name__ == "__main__":
     #     datetime_formatted(d2),
     #     last(d1, d2, 60)
     # ), sep="\n")
-    be = ordered_slots(slots)
-    s.add(be)
-    if s.check() == sat:
-        print(s.model())
-    else:
-        print("Non satisfiable")
+    # if s.check() == sat:
+    #     print(s.model())
+    # else:
+    #     print("Non satisfiable")
