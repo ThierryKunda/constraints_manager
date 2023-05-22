@@ -72,8 +72,8 @@
         {
             "order_position": 1,
             "session_type": "lecture",
-                "course_id": 1,
-                "duration": 120
+            "course_id": 1,
+            "duration": 120
         },
         {
             "order_position": 2,
