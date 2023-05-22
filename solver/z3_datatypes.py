@@ -50,12 +50,14 @@ Course.declare(
     'ccourse',
     ('id', IntSort()),
     ('start', Datetime),
-    ('group_amount', IntSort())
+    ('students_amount', IntSort()),
+    ('groups_amount', IntSort())
 )
 Course = Course.create()
 course_id = Course.id
 course_start = Course.start
-group_amount = Course.group_amount
+students_amount = Course.students_amount
+groups_amount = Course.groups_amount
 
 SessionType = Datatype('SessionType')
 SessionType.declare('lecture')
