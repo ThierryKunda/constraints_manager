@@ -34,6 +34,7 @@ duree_min = [constraints.duree_min(sl, 120) for sl in slots]
 in_rooms = [constraints.in_rooms(sl, rooms) for sl in slots]
 in_courses = [constraints.in_courses(sl, courses) for sl in slots]
 pos_uniques = constraints.positions_uniques(slots)
+pos_ordonnees = constraints.positions_ordonnees(slots)
 
 s = Solver()
 
@@ -54,6 +55,7 @@ models = funcs.all_models(
     *in_rooms,
     *in_courses,
     *pos_uniques,
+    *pos_ordonnees,
     max_models=1
 )
 print(*models, sep="\n")

@@ -270,6 +270,20 @@ def positions_uniques(slots) -> list[BoolRef]:
                 )
     return constrs
 
+def positions_ordonnees(slots) -> list[BoolRef]:
+    constrs = []
+    for i in range(len(slots)):
+        for j in range(len(slots)):
+            if i != j:
+                constrs.append(
+                    equivalent(
+                        dtypes.indice_position(dtypes.order_position(slots[i]))
+                        <= dtypes.indice_position(dtypes.order_position(slots[j])),
+                        ordered_datetimes(dtypes.slot_start_time(slots[i]), dtypes.slot_start_time(slots[j]))
+                    )
+                )
+    return constrs
+
 def attribuer_creneau(slots, day, month, year) -> list[BoolRef]:
     cstrs = []
     for s in slots:
