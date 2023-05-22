@@ -1,8 +1,8 @@
-from z3 import Solver, ExprRef, ModelRef, Or, sat, unsat
+from z3 import Solver, ExprRef, ModelRef, Or, sat, unsat, simplify, And
 
 def all_models(s: Solver, *e: ExprRef, max_models: int | None = None) -> list[ModelRef]:
     models: list[ModelRef] = []
-    s.add(*e)
+    s.add(simplify(And(*e), bv_not_simpl=True))
     def collect_model(s: Solver, mdls: list[ModelRef]):
         m = s.model()
         # print(m, "\n")
