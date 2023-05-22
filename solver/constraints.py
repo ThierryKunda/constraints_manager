@@ -257,6 +257,19 @@ def in_rooms(slot, rooms: list) -> BoolRef:
 def in_courses(slot, courses: list) -> BoolRef:
     return Or(*[dtypes.subject(slot) == c for c in courses])
 
+def positions_uniques(slots) -> list[BoolRef]:
+    constrs = []
+    for i in range(len(slots)):
+        for j in range(len(slots)):
+            if i != j:
+                constrs.append(
+                    Implies(
+                        dtypes.subject(slots[i]) == dtypes.subject(slots[j]),
+                        dtypes.indice_position(dtypes.order_position(slots[i])) != dtypes.indice_position(dtypes.order_position(slots[j]))
+                    )
+                )
+    return constrs
+
 def attribuer_creneau(slots, day, month, year) -> list[BoolRef]:
     cstrs = []
     for s in slots:

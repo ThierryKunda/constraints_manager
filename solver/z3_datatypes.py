@@ -72,6 +72,8 @@ OrderPosition.declare(
 )
 OrderPosition = OrderPosition.create()
 
+indice_position = OrderPosition.order_position
+
 Slot = Datatype('Slot')
 Slot.declare(
     ('cslot'),
@@ -91,6 +93,7 @@ slot_end_time = Slot.end_time
 session_type = Slot.session_type
 subject = Slot.subject
 room = Slot.room
+order_position = Slot.order_position
 
 # def datetimes_from_interval(
 #         start_hour: int, start_minute: int,

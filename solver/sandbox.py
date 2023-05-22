@@ -33,6 +33,7 @@ duree_min = [constraints.duree_min(sl, 120) for sl in slots]
 # attr_slot = constraints.attribuer_creneau(slots, 22, 5, 2023)
 in_rooms = [constraints.in_rooms(sl, rooms) for sl in slots]
 in_courses = [constraints.in_courses(sl, courses) for sl in slots]
+pos_uniques = constraints.positions_uniques(slots)
 
 s = Solver()
 
@@ -52,6 +53,7 @@ models = funcs.all_models(
     # *attr_slot,
     *in_rooms,
     *in_courses,
+    *pos_uniques,
     max_models=1
 )
 print(*models, sep="\n")
