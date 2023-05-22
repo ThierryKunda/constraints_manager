@@ -278,11 +278,24 @@ def positions_ordonnees(slots) -> list[BoolRef]:
                 constrs.append(
                     equivalent(
                         dtypes.indice_position(dtypes.order_position(slots[i]))
-                        <= dtypes.indice_position(dtypes.order_position(slots[j])),
+                        < dtypes.indice_position(dtypes.order_position(slots[j])),
                         ordered_datetimes(dtypes.slot_start_time(slots[i]), dtypes.slot_start_time(slots[j]))
                     )
                 )
     return constrs
+
+def debut_cours(slot, course, session_amount) -> BoolRef:
+    return Implies(
+        And(
+            ordered_datetimes(dtypes.course_start(course), dtypes.slot_start_time(slot)),
+            dtypes.subject(slot) == course
+        ),
+        And(
+            1 <= dtypes.indice_position(dtypes.order_position(slot)),
+            dtypes.indice_position(dtypes.order_position(slot)) < session_amount
+        )
+    )
+
 
 def attribuer_creneau(slots, day, month, year) -> list[BoolRef]:
     cstrs = []

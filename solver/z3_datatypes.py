@@ -52,6 +52,7 @@ Course.declare(
     ('start', Datetime),
 )
 Course = Course.create()
+course_start = Course.start
 
 SessionType = Datatype('SessionType')
 SessionType.declare('lecture')
