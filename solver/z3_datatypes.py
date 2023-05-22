@@ -35,24 +35,57 @@ Room.declare(
     ('capacity', IntSort()),
     ('lecture', BoolSort()),
     ('tutorial', BoolSort()),
-    ('practicum', BoolSort())
+    ('practicum', BoolSort()),
+    ('midterm', BoolSort()),
+    ('exam', BoolSort()),
+    ('oral', BoolSort()),
 )
 Room = Room.create()
 
 room_id = Room.room_id
 capacity = Room.capacity
 
+Course = Datatype('Course')
+Course.declare(
+    'ccourse',
+    ('id', IntSort()),
+    ('start', Datetime),
+)
+Course = Course.create()
+
+SessionType = Datatype('SessionType')
+SessionType.declare('lecture')
+SessionType.declare('tutorial')
+SessionType.declare('practicum')
+SessionType.declare('midterm')
+SessionType.declare('exam')
+SessionType.declare('oral')
+SessionType = SessionType.create()
+
+OrderPosition = Datatype('OrderPosition')
+OrderPosition.declare(
+    'order',
+    ('order_position', IntSort()),
+    ('session_type', SessionType),
+    ('course_id', IntSort()),
+    ('duration', IntSort()),
+)
+OrderPosition = OrderPosition.create()
+
 Slot = Datatype('Slot')
 Slot.declare(
     ('cslot'),
+    ('assigned', BoolSort()),
+    ('order_position', OrderPosition),
     ('start_time', Datetime),
     ('end_time', Datetime),
-    ('session_type', IntSort()),
-    ('subject', IntSort()),
+    ('session_type', SessionType),
+    ('subject', Course),
     ('room', Room)
 )
 Slot = Slot.create()
 
+assigned = Slot.assigned
 slot_start_time = Slot.start_time
 slot_end_time = Slot.end_time
 session_type = Slot.session_type
