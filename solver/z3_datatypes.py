@@ -50,9 +50,12 @@ Course.declare(
     'ccourse',
     ('id', IntSort()),
     ('start', Datetime),
+    ('group_amount', IntSort())
 )
 Course = Course.create()
+course_id = Course.id
 course_start = Course.start
+group_amount = Course.group_amount
 
 SessionType = Datatype('SessionType')
 SessionType.declare('lecture')
@@ -78,7 +81,6 @@ indice_position = OrderPosition.order_position
 Slot = Datatype('Slot')
 Slot.declare(
     ('cslot'),
-    ('assigned', BoolSort()),
     ('order_position', OrderPosition),
     ('start_time', Datetime),
     ('end_time', Datetime),
@@ -88,7 +90,6 @@ Slot.declare(
 )
 Slot = Slot.create()
 
-assigned = Slot.assigned
 slot_start_time = Slot.start_time
 slot_end_time = Slot.end_time
 session_type = Slot.session_type
