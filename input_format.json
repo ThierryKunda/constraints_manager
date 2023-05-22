@@ -48,24 +48,8 @@
         {
             "id": 1,
             "course_start": "05/09/2023",
-            "studentsPerGroup": [
-                {
-                    "group_id": 1,
-                    "size": 29
-                },
-                {
-                    "group_id": 2,
-                    "size": 28
-                },
-                {
-                    "group_id": 3,
-                    "size": 30
-                },
-                {
-                    "group_id": 4,
-                    "size": 32
-                }
-            ]
+            "studentsAmount": 100,
+            "groupsAmount": 4
         }
     ],
     "order_position": [
