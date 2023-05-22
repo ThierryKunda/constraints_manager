@@ -77,3 +77,10 @@ class GenerationRequest(BaseModel):
     classrooms: list[ClassRoom]
     courses: list[Course]
     sessions_order: SessionOrder
+
+class Slot(BaseModel):
+    order: SessionOrder
+    start: DateTimeFormat
+    end: DateTimeFormat
+    room_id: int
+    course_id: int
