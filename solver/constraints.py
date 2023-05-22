@@ -251,6 +251,23 @@ def duree_min(slot, duration: int) -> BoolRef:
         + dtypes.minutes(dtypes.slot_start_time(slot))
     ) >= duration
 
+def in_rooms(slot, rooms: list) -> BoolRef:
+    return Or(*[dtypes.room(slot) == r for r in rooms])
+
+def in_courses(slot, courses: list) -> BoolRef:
+    return Or(*[dtypes.subject(slot) == c for c in courses])
+
+def attribuer_creneau(slots, day, month, year) -> list[BoolRef]:
+    cstrs = []
+    for s in slots:
+        cstrs.append(Implies(
+            And(
+                dtypes.day(dtypes.slot_start_time(s)) == day,
+                dtypes.month(dtypes.slot_start_time(s)) == month,
+                dtypes.year(dtypes.slot_start_time(s)) == year
+            ), dtypes.assigned(s)))
+    return cstrs
+
 if __name__ == "__main__":
     s = Solver()
     sl = Const('sl', dtypes.Slot)
