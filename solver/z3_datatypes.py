@@ -44,6 +44,12 @@ Room = Room.create()
 
 room_id = Room.room_id
 capacity = Room.capacity
+supporte_lecture = Room.lecture
+supporte_tutorial = Room.tutorial
+supporte_practicum = Room.practicum
+supporte_midterm = Room.midterm
+supporte_exam = Room.exam
+supporte_oral = Room.oral
 
 Course = Datatype('Course')
 Course.declare(
