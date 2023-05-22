@@ -2,18 +2,19 @@ from z3 import Int, IntSort, Array, Solver, sat, ForAll, Implies, And, Exists, L
 import z3_datatypes as dt
 import constraints
 import functions as funcs
+from random import randint
 # print()
 # s.add(t == lm)
 
 slots = [Const(f'sl{i}', dt.Slot) for i in range(4*2)]
 rooms = [
-    dt.Room.croom(i, 35, False, True, True, False, False, False)
+    dt.Room.croom(i, 30, False, True, True, False, False, False)
     for i in range(10)
 ]
 
 courses = [
-    dt.Course.ccourse(i, dt.Datetime.cdt(2, 9, 2023, 9, 0))
-    for i in range(4)
+    dt.Course.ccourse(i, dt.Datetime.cdt(i+1, 9, 2023, 9, 0), randint(80, 85), randint(3,4))
+    for i in range(2)
 ]
 
 order = [
@@ -36,8 +37,12 @@ in_courses = [constraints.in_courses(sl, courses) for sl in slots]
 pos_uniques = constraints.positions_uniques(slots)
 pos_ordonnees = constraints.positions_ordonnees(slots)
 deb_cours = []
+taille_promo = []
+taille_groupe = []
 for c in courses:
     deb_cours += [constraints.debut_cours(sl, c, 4) for sl in slots]
+    taille_promo += [constraints.taille_promo(sl, c) for sl in slots]
+    taille_groupe += [constraints.taille_groupe(sl, c) for sl in slots]
 
 s = Solver()
 
@@ -60,6 +65,8 @@ models = funcs.all_models(
     *pos_uniques,
     *pos_ordonnees,
     *deb_cours,
+    *taille_promo,
+    *taille_groupe,
     max_models=1
 )
 if len(models) > 0:

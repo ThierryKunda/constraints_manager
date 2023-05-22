@@ -1,4 +1,4 @@
-from z3 import BoolRef, And, Solver, Const, Int, Implies, And, Or, Implies
+from z3 import BoolRef, And, Solver, Const, Int, Implies, And, Or, Implies, Not
 
 from functions import all_models
 import z3_datatypes as dtypes
@@ -288,14 +288,39 @@ def debut_cours(slot, course, session_amount) -> BoolRef:
     return Implies(
         And(
             ordered_datetimes(dtypes.course_start(course), dtypes.slot_start_time(slot)),
-            dtypes.subject(slot) == course
+            dtypes.subject(slot) == course,
         ),
         And(
             1 <= dtypes.indice_position(dtypes.order_position(slot)),
-            dtypes.indice_position(dtypes.order_position(slot)) < session_amount
+            dtypes.indice_position(dtypes.order_position(slot)) < session_amount,
         )
     )
 
+def taille_promo(slot, course) -> BoolRef:
+    return Implies(
+        And(
+            dtypes.subject(slot) == course,
+            Not(
+                Or(
+                    dtypes.session_type(slot) == dtypes.SessionType.tutorial,
+                    dtypes.session_type(slot) == dtypes.SessionType.practicum,
+                )
+            )
+        ),
+        dtypes.students_amount(course) <= dtypes.capacity(dtypes.room(slot))
+    )
+    
+def taille_groupe(slot, course) -> BoolRef:
+    return Implies(
+        And(
+            dtypes.subject(slot) == course,
+            Or(
+                dtypes.session_type(slot) == dtypes.SessionType.tutorial,
+                dtypes.session_type(slot) == dtypes.SessionType.practicum,
+            )
+        ),
+        (dtypes.students_amount(course) / dtypes.groups_amount(course)) <= dtypes.capacity(dtypes.room(slot))
+    )
 
 def attribuer_creneau(slots, day, month, year) -> list[BoolRef]:
     cstrs = []
