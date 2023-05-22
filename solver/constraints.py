@@ -322,6 +322,34 @@ def taille_groupe(slot, course) -> BoolRef:
         (dtypes.students_amount(course) / dtypes.groups_amount(course)) <= dtypes.capacity(dtypes.room(slot))
     )
 
+def seance_supporte_par_salle(slot) -> BoolRef:
+    return Or(
+        And(
+            dtypes.session_type(slot) == dtypes.SessionType.lecture,
+            dtypes.supporte_lecture(dtypes.room(slot))
+        ),
+        And(
+            dtypes.session_type(slot) == dtypes.SessionType.tutorial,
+            dtypes.supporte_tutorial(dtypes.room(slot))
+        ),
+        And(
+            dtypes.session_type(slot) == dtypes.SessionType.practicum,
+            dtypes.supporte_practicum(dtypes.room(slot))
+        ),
+        And(
+            dtypes.session_type(slot) == dtypes.SessionType.midterm,
+            dtypes.supporte_midterm(dtypes.room(slot))
+        ),
+        And(
+            dtypes.session_type(slot) == dtypes.SessionType.exam,
+            dtypes.supporte_exam(dtypes.room(slot))
+        ),
+        And(
+            dtypes.session_type(slot) == dtypes.SessionType.oral,
+            dtypes.supporte_oral(dtypes.room(slot))
+        ),
+    )
+
 def attribuer_creneau(slots, day, month, year) -> list[BoolRef]:
     cstrs = []
     for s in slots:

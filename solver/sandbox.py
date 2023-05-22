@@ -43,7 +43,7 @@ for c in courses:
     deb_cours += [constraints.debut_cours(sl, c, 4) for sl in slots]
     taille_promo += [constraints.taille_promo(sl, c) for sl in slots]
     taille_groupe += [constraints.taille_groupe(sl, c) for sl in slots]
-
+type_seance_supporte = [constraints.seance_supporte_par_salle(sl) for sl in slots]
 s = Solver()
 
 # s.add(*formatted, *ordered, *in_day_interval, *auto_exclusion, *pause_dejeuner)
@@ -67,6 +67,7 @@ models = funcs.all_models(
     *deb_cours,
     *taille_promo,
     *taille_groupe,
+    *type_seance_supporte,
     max_models=1
 )
 if len(models) > 0:
