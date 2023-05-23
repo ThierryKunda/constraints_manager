@@ -20,6 +20,9 @@ courses = [
 order = [
     dt.OrderPosition.order(i, dt.SessionType.lecture, 1, 60)
     for i in range(4)
+] + [
+    dt.OrderPosition.order(i, dt.SessionType.lecture, 2, 60)
+    for i in range(4)
 ]
 
 formatted = [And(constraints.datetime_formatted(dt.slot_start_time(sl)), constraints.datetime_formatted(dt.slot_end_time(sl))) for sl in slots]
@@ -31,7 +34,6 @@ pause_dejeuner = [constraints.pause_dejeuner(sl, 12, 30, 13, 30) for sl in slots
 calendrier_valide = [constraints.calendrier_valide(sl) for sl in slots]
 meme_j = [constraints.meme_jour(sl) for sl in slots]
 duree_min = [constraints.duree_min(sl, 120) for sl in slots]
-# attr_slot = constraints.attribuer_creneau(slots, 22, 5, 2023)
 in_rooms = [constraints.in_rooms(sl, rooms) for sl in slots]
 in_courses = [constraints.in_courses(sl, courses) for sl in slots]
 pos_uniques = constraints.positions_uniques(slots)
@@ -44,6 +46,9 @@ for c in courses:
     taille_promo += [constraints.taille_promo(sl, c) for sl in slots]
     taille_groupe += [constraints.taille_groupe(sl, c) for sl in slots]
 type_seance_supporte = [constraints.seance_supporte_par_salle(sl) for sl in slots]
+type_seance_donnee = [constraints.type_seance_donnee(sl) for sl in slots]
+attrib_creneau = [constraints.attribuer_creneau(slots, o) for o in order]
+
 s = Solver()
 
 # s.add(*formatted, *ordered, *in_day_interval, *auto_exclusion, *pause_dejeuner)
@@ -59,7 +64,6 @@ models = funcs.all_models(
     *calendrier_valide,
     *meme_j,
     *duree_min,
-    # *attr_slot,
     *in_rooms,
     *in_courses,
     *pos_uniques,
@@ -68,6 +72,8 @@ models = funcs.all_models(
     *taille_promo,
     *taille_groupe,
     *type_seance_supporte,
+    *type_seance_donnee,
+    *attrib_creneau,
     max_models=1
 )
 if len(models) > 0:

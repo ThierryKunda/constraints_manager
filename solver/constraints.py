@@ -1,3 +1,4 @@
+from random import randint
 from z3 import BoolRef, And, Solver, Const, Int, Implies, And, Or, Implies, Not
 
 from functions import all_models
@@ -350,16 +351,18 @@ def seance_supporte_par_salle(slot) -> BoolRef:
         ),
     )
 
-def attribuer_creneau(slots, day, month, year) -> list[BoolRef]:
-    cstrs = []
-    for s in slots:
-        cstrs.append(Implies(
-            And(
-                dtypes.day(dtypes.slot_start_time(s)) == day,
-                dtypes.month(dtypes.slot_start_time(s)) == month,
-                dtypes.year(dtypes.slot_start_time(s)) == year
-            ), dtypes.assigned(s)))
-    return cstrs
+def type_seance_donnee(slot) -> BoolRef:
+    return dtypes.order_session_type(dtypes.order_position(slot)) == dtypes.session_type(slot)
+
+def attribuer_creneau(slots: list, order_position) -> list[BoolRef]:
+    constrs = []
+    i = randint(0, len(slots)-1)
+    for j in range(len(slots)):
+        if i == j:
+            constrs.append(dtypes.order_position(slots[i]) == order_position)
+        else:
+            constrs.append(dtypes.order_position(slots[i]) != order_position)
+    return Or(*constrs)
 
 if __name__ == "__main__":
     s = Solver()

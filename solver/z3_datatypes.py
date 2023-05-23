@@ -85,6 +85,7 @@ OrderPosition.declare(
 OrderPosition = OrderPosition.create()
 
 indice_position = OrderPosition.order_position
+order_session_type = OrderPosition.session_type
 
 Slot = Datatype('Slot')
 Slot.declare(
