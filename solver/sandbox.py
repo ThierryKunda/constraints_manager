@@ -48,7 +48,7 @@ for c in courses:
 type_seance_supporte = [constraints.seance_supporte_par_salle(sl) for sl in slots]
 type_seance_donnee = [constraints.type_seance_donnee(sl) for sl in slots]
 attrib_creneau = [constraints.attribuer_creneau(slots, o) for o in order]
-
+duree_seance = [constraints.duree_seance(sl) for sl in slots]
 s = Solver()
 
 # s.add(*formatted, *ordered, *in_day_interval, *auto_exclusion, *pause_dejeuner)
@@ -74,6 +74,7 @@ models = funcs.all_models(
     *type_seance_supporte,
     *type_seance_donnee,
     *attrib_creneau,
+    *duree_seance,
     max_models=1
 )
 if len(models) > 0:

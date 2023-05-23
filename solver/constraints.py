@@ -45,10 +45,10 @@ def ordered_datetimes(d1, d2, margin: int = 0) -> BoolRef:
 
 def last(d1, d2, duration: int):
     return (
-        dtypes.hour(d2) * 60
+        (dtypes.hour(d2) * 60)
         + dtypes.minutes(d2)
     ) - (
-        dtypes.hour(d1) * 60
+        (dtypes.hour(d1) * 60)
         + dtypes.minutes(d1)
     ) == duration
 
@@ -353,6 +353,9 @@ def seance_supporte_par_salle(slot) -> BoolRef:
 
 def type_seance_donnee(slot) -> BoolRef:
     return dtypes.order_session_type(dtypes.order_position(slot)) == dtypes.session_type(slot)
+
+def duree_seance(slot) -> BoolRef:
+    return last(dtypes.slot_start_time(slot), dtypes.slot_end_time(slot), dtypes.order_duration(dtypes.order_position(slot)))
 
 def attribuer_creneau(slots: list, order_position) -> list[BoolRef]:
     constrs = []
