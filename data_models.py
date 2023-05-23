@@ -3,6 +3,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, constr, PositiveInt
 
+import solver.z3_datatypes as z3_dt
+
 DateTimeFormat = constr(regex=r"[0-9]{2}/[0-9]{2}/[0-9]{4}(-[0-9]{2}:[0-9]{2})?")
 TimeFormat = constr(regex=r"[0-9]{2}:[0-9]{2}")
 
@@ -11,6 +13,9 @@ class SessionType(str, Enum):
     lecture = "lecture"
     tutorial = "tutorial"
     practicum = "practicum"
+    midterm = "midterm"
+    exam = "exam"
+    oral = "oral"
 
 
 class TimeInterval():
@@ -47,7 +52,18 @@ class ClassRoom(BaseModel):
     id: int
     capacity: int
     session_types: list[SessionType]
-    availabilities: list[DateTimeInterval]
+
+    def get_Z3_representation(self):
+        return z3_dt.Room.croom(
+            self.id,
+            self.capacity,
+            SessionType.lecture in self.session_types,
+            SessionType.tutorial in self.session_types,
+            SessionType.practicum in self.session_types,
+            SessionType.midterm in self.session_types,
+            SessionType.exam in self.session_types,
+            SessionType.oral in self.session_types,
+        )
 
 
 class Group(BaseModel):
@@ -84,3 +100,9 @@ class Slot(BaseModel):
     end: DateTimeFormat
     room_id: int
     course_id: int
+
+
+if __name__ == "__main__":
+    r0 = ClassRoom(id=1, capacity=100, session_types=[SessionType.tutorial, SessionType.practicum])
+    print(r0)
+    print(r0.get_Z3_representation())
