@@ -13,7 +13,7 @@ rooms = [
 ]
 
 courses = [
-    dt.Course.ccourse(i, dt.Datetime.cdt(i+1, 9, 2023, 9, 0), randint(80, 85), randint(3,4))
+    dt.Course.ccourse(i, dt.Datetime.cdt(1, 9, 2023, 9, 0), randint(80, 85), randint(3,4))
     for i in range(2)
 ]
 
@@ -66,8 +66,8 @@ models = funcs.all_models(
     *duree_min,
     *in_rooms,
     *in_courses,
-    *pos_uniques,
-    *pos_ordonnees,
+    # *pos_uniques,
+    # *pos_ordonnees,
     *deb_cours,
     *taille_promo,
     *taille_groupe,

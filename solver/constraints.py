@@ -50,7 +50,7 @@ def last(d1, d2, duration: int):
     ) - (
         (dtypes.hour(d1) * 60)
         + dtypes.minutes(d1)
-    ) == duration
+    ) >= duration
 
 def start_before_end(slot) -> BoolRef:
     return ordered_datetimes(dtypes.slot_start_time(slot), dtypes.slot_end_time(slot))
