@@ -44,18 +44,26 @@ Room = Room.create()
 
 room_id = Room.room_id
 capacity = Room.capacity
+supporte_lecture = Room.lecture
+supporte_tutorial = Room.tutorial
+supporte_practicum = Room.practicum
+supporte_midterm = Room.midterm
+supporte_exam = Room.exam
+supporte_oral = Room.oral
 
 Course = Datatype('Course')
 Course.declare(
     'ccourse',
     ('id', IntSort()),
     ('start', Datetime),
-    ('group_amount', IntSort())
+    ('students_amount', IntSort()),
+    ('groups_amount', IntSort())
 )
 Course = Course.create()
 course_id = Course.id
 course_start = Course.start
-group_amount = Course.group_amount
+students_amount = Course.students_amount
+groups_amount = Course.groups_amount
 
 SessionType = Datatype('SessionType')
 SessionType.declare('lecture')
@@ -77,6 +85,8 @@ OrderPosition.declare(
 OrderPosition = OrderPosition.create()
 
 indice_position = OrderPosition.order_position
+order_session_type = OrderPosition.session_type
+order_duration = OrderPosition.duration
 
 Slot = Datatype('Slot')
 Slot.declare(

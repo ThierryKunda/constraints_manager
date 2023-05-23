@@ -1,4 +1,5 @@
-from z3 import BoolRef, And, Solver, Const, Int, Implies, And, Or, Implies
+from random import randint
+from z3 import BoolRef, And, Solver, Const, Int, Implies, And, Or, Implies, Not
 
 from functions import all_models
 import z3_datatypes as dtypes
@@ -44,10 +45,10 @@ def ordered_datetimes(d1, d2, margin: int = 0) -> BoolRef:
 
 def last(d1, d2, duration: int):
     return (
-        dtypes.hour(d2) * 60
+        (dtypes.hour(d2) * 60)
         + dtypes.minutes(d2)
     ) - (
-        dtypes.hour(d1) * 60
+        (dtypes.hour(d1) * 60)
         + dtypes.minutes(d1)
     ) == duration
 
@@ -288,25 +289,83 @@ def debut_cours(slot, course, session_amount) -> BoolRef:
     return Implies(
         And(
             ordered_datetimes(dtypes.course_start(course), dtypes.slot_start_time(slot)),
-            dtypes.subject(slot) == course
+            dtypes.subject(slot) == course,
         ),
         And(
             1 <= dtypes.indice_position(dtypes.order_position(slot)),
-            dtypes.indice_position(dtypes.order_position(slot)) < session_amount
+            dtypes.indice_position(dtypes.order_position(slot)) < session_amount,
         )
     )
 
+def taille_promo(slot, course) -> BoolRef:
+    return Implies(
+        And(
+            dtypes.subject(slot) == course,
+            Not(
+                Or(
+                    dtypes.session_type(slot) == dtypes.SessionType.tutorial,
+                    dtypes.session_type(slot) == dtypes.SessionType.practicum,
+                )
+            )
+        ),
+        dtypes.students_amount(course) <= dtypes.capacity(dtypes.room(slot))
+    )
+    
+def taille_groupe(slot, course) -> BoolRef:
+    return Implies(
+        And(
+            dtypes.subject(slot) == course,
+            Or(
+                dtypes.session_type(slot) == dtypes.SessionType.tutorial,
+                dtypes.session_type(slot) == dtypes.SessionType.practicum,
+            )
+        ),
+        (dtypes.students_amount(course) / dtypes.groups_amount(course)) <= dtypes.capacity(dtypes.room(slot))
+    )
 
-def attribuer_creneau(slots, day, month, year) -> list[BoolRef]:
-    cstrs = []
-    for s in slots:
-        cstrs.append(Implies(
-            And(
-                dtypes.day(dtypes.slot_start_time(s)) == day,
-                dtypes.month(dtypes.slot_start_time(s)) == month,
-                dtypes.year(dtypes.slot_start_time(s)) == year
-            ), dtypes.assigned(s)))
-    return cstrs
+def seance_supporte_par_salle(slot) -> BoolRef:
+    return Or(
+        And(
+            dtypes.session_type(slot) == dtypes.SessionType.lecture,
+            dtypes.supporte_lecture(dtypes.room(slot))
+        ),
+        And(
+            dtypes.session_type(slot) == dtypes.SessionType.tutorial,
+            dtypes.supporte_tutorial(dtypes.room(slot))
+        ),
+        And(
+            dtypes.session_type(slot) == dtypes.SessionType.practicum,
+            dtypes.supporte_practicum(dtypes.room(slot))
+        ),
+        And(
+            dtypes.session_type(slot) == dtypes.SessionType.midterm,
+            dtypes.supporte_midterm(dtypes.room(slot))
+        ),
+        And(
+            dtypes.session_type(slot) == dtypes.SessionType.exam,
+            dtypes.supporte_exam(dtypes.room(slot))
+        ),
+        And(
+            dtypes.session_type(slot) == dtypes.SessionType.oral,
+            dtypes.supporte_oral(dtypes.room(slot))
+        ),
+    )
+
+def type_seance_donnee(slot) -> BoolRef:
+    return dtypes.order_session_type(dtypes.order_position(slot)) == dtypes.session_type(slot)
+
+def duree_seance(slot) -> BoolRef:
+    return last(dtypes.slot_start_time(slot), dtypes.slot_end_time(slot), dtypes.order_duration(dtypes.order_position(slot)))
+
+def attribuer_creneau(slots: list, order_position) -> list[BoolRef]:
+    constrs = []
+    i = randint(0, len(slots)-1)
+    for j in range(len(slots)):
+        if i == j:
+            constrs.append(dtypes.order_position(slots[i]) == order_position)
+        else:
+            constrs.append(dtypes.order_position(slots[i]) != order_position)
+    return Or(*constrs)
 
 if __name__ == "__main__":
     s = Solver()
