@@ -18,7 +18,7 @@ class TimeInterval():
     end: TimeFormat
 
 
-class DateTimeInterval():
+class DateTimeInterval(BaseModel):
     start: DateTimeFormat
     end: DateTimeFormat
 
