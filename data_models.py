@@ -66,15 +66,16 @@ class ClassRoom(BaseModel):
         )
 
 
-class Group(BaseModel):
-    group_id: PositiveInt
-    size: PositiveInt
-
-
 class Course(BaseModel):
     id: PositiveInt
     course_start: DateTimeFormat
     students_per_group: list[Group]
+
+    def get_Z3_representation(self):
+        return z3_dt.Course.ccourse(
+            self.id,
+            
+        )
 
 
 class SessionOrder(BaseModel):
